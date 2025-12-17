@@ -1,47 +1,135 @@
-# Advanced RAG System: Hybrid Retrieval, Reranking & LangGraph Orchestration
+# Advanced RAG System
 
-This project is a production-oriented implementation of a **Retrieval-Augmented Generation (RAG)** system. It moves beyond basic vector search to address common failure modes in RAG (e.g., poor recall, loss of context, hallucinations) by implementing a multi-stage pipeline.
+## Hybrid Retrieval, Reranking, and LangGraph Orchestration
 
- 
-*(Note: A diagram showing Query -> Hybrid Search -> Reranking -> LLM would be placed here)*
+This repository contains a **production-oriented implementation of a Retrieval-Augmented Generation (RAG) system** designed to solve common real-world RAG failure modes such as low recall, context fragmentation, and hallucinations. Instead of relying on a single vector search step, the system implements a **multi-stage, agentic retrieval and generation pipeline** with explicit evaluation hooks.
 
-## 🚀 Key Features
+The project is intended as a **portfolio-grade reference architecture** for building reliable RAG systems used in legal tech, enterprise knowledge bases, and domain-specific AI assistants.
 
-1.  **Hybrid Retrieval**: Combines **BM25 (Sparse)** keyword search with **FAISS (Dense)** vector search. This captures both exact term matches (technical jargon) and semantic meaning.
-2.  **Advanced Chunking**: Implements **Structure-Aware Chunking** (respecting Markdown headers) to keep related concepts together, preventing context fragmentation.
-3.  **Multi-Stage Reranking**: Uses a **Cross-Encoder** to re-score retrieved documents. This allows retrieving a large pool of documents (Recall) and filtering them down to the most relevant ones (Precision) before the LLM step.
-4.  **Agentic Workflow**: Orchestrated using **LangGraph**, creating a deterministic, debuggable flow where the state is passed clearly between retrieval, reranking, and generation nodes.
-5.  **Evaluation hooks**: Built-in modules to test retrieval quality and hallucination (LLM-as-a-judge).
+---
 
-## 🛠 Tech Stack
+## System Overview
 
-* **Orchestration**: LangChain, LangGraph
-* **Vector DB**: FAISS (Facebook AI Similarity Search)
-* **Retrieval**: BM25 (Rank_BM25), OpenAI Embeddings
-* **Reranking**: HuggingFace Cross-Encoders (`ms-marco-MiniLM-L-6-v2`)
-* **API**: FastAPI
-* **Language**: Python 3.10+
+High-level pipeline:
 
-## 📂 Project Structure
+1. User query ingestion
+2. Hybrid retrieval (sparse + dense)
+3. Metadata-aware filtering and chunk selection
+4. Multi-stage reranking for precision
+5. Context assembly and validation
+6. LLM answer generation
+7. Evaluation and observability hooks
 
+*(A diagram showing Query → Hybrid Search → Reranking → LLM Generation can be added here.)*
+
+---
+
+## Key Features
+
+### 1. Hybrid Retrieval (Sparse + Dense)
+
+Combines **BM25 keyword-based retrieval** with **FAISS-based semantic vector search**. This approach improves recall by capturing both exact term matches (legal or technical jargon) and semantic similarity.
+
+### 2. Advanced Chunking Strategies
+
+Implements **structure-aware chunking** that respects document boundaries such as Markdown headers and sections. This preserves semantic coherence and prevents loss of contextual meaning during retrieval.
+
+### 3. Multi-Stage Reranking
+
+Uses a **cross-encoder reranker** to rescore retrieved chunks. A larger candidate set is retrieved initially (high recall) and then filtered down to the most relevant context (high precision) before generation.
+
+### 4. Agentic RAG Orchestration
+
+The pipeline is orchestrated using **LangGraph**, enabling a deterministic, debuggable workflow. Each stage (retrieval, reranking, generation) is represented as a node with explicit state passing, making the system easy to inspect and extend.
+
+### 5. Evaluation and Observability Hooks
+
+Includes evaluation utilities for:
+
+* Retrieval quality comparison (semantic vs sparse vs hybrid)
+* Chunking strategy experiments
+* Reranking impact analysis
+* Hallucination checks using LLM-as-a-judge
+
+---
+
+## Tech Stack
+
+### Core AI and Orchestration
+
+* **LangChain** – LLM abstraction and tooling
+* **LangGraph** – Agentic workflow orchestration
+
+### Retrieval and Ranking
+
+* **FAISS** – Dense vector similarity search
+* **BM25 / Rank-BM25** – Sparse keyword retrieval
+* **HuggingFace Cross-Encoders** – Document reranking (e.g., `ms-marco-MiniLM-L-6-v2`)
+
+### Backend and Infrastructure
+
+* **FastAPI** – API layer
+* **Python 3.10+** – Core language
+* **Pydantic** – Request and response schemas
+
+---
+
+## Project Structure
+
+```
 advanced-rag-system/
 ├── app/
 │   ├── __init__.py
-│   ├── config.py           # Configuration settings (API keys, params)
-│   ├── main.py             # FastAPI entry point
-│   ├── schemas.py          # Pydantic models for API request/response
+│   ├── config.py           # Configuration settings (API keys, parameters)
+│   ├── main.py             # FastAPI application entry point
+│   ├── schemas.py          # Pydantic models for API requests and responses
 ├── core/
 │   ├── __init__.py
-│   ├── chunking.py         # Advanced chunking logic
-│   ├── embedding.py        # Embedding model wrapper
-│   ├── evaluation.py       # Retrieval and generation evaluation logic
+│   ├── chunking.py         # Advanced and structure-aware chunking logic
+│   ├── embedding.py        # Embedding model wrappers
+│   ├── evaluation.py       # Retrieval and generation evaluation utilities
 │   ├── graph.py            # LangGraph workflow definition
-│   ├── ingestion.py        # Document loading and processing
-│   ├── reranker.py         # Cross-encoder/LLM reranking
-│   ├── retriever.py        # Hybrid (Dense + Sparse) retrieval
-├── data/                   # Folder for storage (faiss index, raw docs)
-├── notebooks/              # Jupyter notebooks for experiments (optional)
-├── tests/                  # Unit tests
+│   ├── ingestion.py        # Document loading and preprocessing
+│   ├── reranker.py         # Cross-encoder and LLM-based reranking
+│   ├── retriever.py        # Hybrid dense and sparse retrieval logic
+├── data/                   # FAISS indexes and raw documents
+├── notebooks/              # Experimental notebooks (optional)
+├── tests/                  # Unit and integration tests
 ├── .env.example            # Environment variable template
 ├── requirements.txt        # Python dependencies
-└── README.md               # Documentation
+└── README.md               # Project documentation
+```
+
+---
+
+## Setup and Installation
+
+1. Clone the repository
+2. Create a virtual environment and install dependencies
+3. Copy `.env.example` to `.env` and configure API keys
+4. Ingest documents and build indexes
+5. Start the FastAPI server
+
+Detailed setup steps can be added based on deployment needs.
+
+---
+
+## Intended Use Cases
+
+* Legal and compliance document assistants
+* Enterprise internal knowledge search
+* Technical documentation Q&A systems
+* High-precision, low-hallucination RAG applications
+
+---
+
+## Design Philosophy
+
+This project prioritizes:
+
+* Reliability over demos
+* Measurable retrieval quality
+* Clear separation of concerns
+* Debuggable and extensible AI workflows
+
+It is designed to serve as both a **learning reference** and a **foundation for production RAG systems**.
