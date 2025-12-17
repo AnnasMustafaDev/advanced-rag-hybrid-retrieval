@@ -80,7 +80,7 @@ Includes evaluation utilities for:
 advanced-rag-system/
 ├── app/
 │   ├── __init__.py
-│   ├── config.py           # Configuration settings (API keys, parameters)
+│   ├── config.py           # Configuration settings (API keys, parameters).
 │   ├── main.py             # FastAPI application entry point
 │   ├── schemas.py          # Pydantic models for API requests and responses
 ├── core/
