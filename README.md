@@ -24,8 +24,24 @@ This project is a production-oriented implementation of a **Retrieval-Augmented 
 
 ## 📂 Project Structure
 
-```text
-├── app/                  # API Layer
-├── core/                 # RAG Logic (Retriever, Reranker, Graph)
-├── data/                 # Local storage
-└── notebooks/            # Experiments
+advanced-rag-system/
+├── app/
+│   ├── __init__.py
+│   ├── config.py           # Configuration settings (API keys, params)
+│   ├── main.py             # FastAPI entry point
+│   ├── schemas.py          # Pydantic models for API request/response
+├── core/
+│   ├── __init__.py
+│   ├── chunking.py         # Advanced chunking logic
+│   ├── embedding.py        # Embedding model wrapper
+│   ├── evaluation.py       # Retrieval and generation evaluation logic
+│   ├── graph.py            # LangGraph workflow definition
+│   ├── ingestion.py        # Document loading and processing
+│   ├── reranker.py         # Cross-encoder/LLM reranking
+│   ├── retriever.py        # Hybrid (Dense + Sparse) retrieval
+├── data/                   # Folder for storage (faiss index, raw docs)
+├── notebooks/              # Jupyter notebooks for experiments (optional)
+├── tests/                  # Unit tests
+├── .env.example            # Environment variable template
+├── requirements.txt        # Python dependencies
+└── README.md               # Documentation
